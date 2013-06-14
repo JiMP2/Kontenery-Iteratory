@@ -23,6 +23,7 @@ public:
 	aghIterator<T> & next();
 	aghIterator<T> & prev();
 	T& current();
+	void current(T const& _value);
 	aghIterator<T> & atFirst();
 	aghIterator<T> & atLast();
 	unsigned int size();
@@ -30,6 +31,7 @@ public:
 	T& operator*();
 	T& operator[](int n);
 	aghIterator<T> operator=(aghContainer<T> * _right);
+	//aghIterator<T> operator=(aghIterator<T> const & _right);
 	aghIterator<T> operator+(int n);
 	aghIterator<T> & operator+=(int n);
 	aghIterator<T> operator-(int n);
@@ -93,6 +95,12 @@ T& aghIterator<T>::current()
 }
 
 template <class T>
+void aghIterator<T>::current(T const& _value)
+{
+	container->replace(currentIndex, _value);
+}
+
+template <class T>
 aghIterator<T> & aghIterator<T>::atFirst()
 {
 	currentIndex = 0;
@@ -132,6 +140,15 @@ aghIterator<T> aghIterator<T>::operator=(aghContainer<T> * _right)
 	
 	return *this;
 }
+/*
+template <class T>
+aghIterator<T> aghIterator<T>::operator=(aghIterator<T> const& _right)
+{
+	container = ;
+	currentIndex = ;
+	
+	return *this;
+}*/
 
 template <class T>
 aghIterator<T> aghIterator<T>::operator+(int n)
@@ -205,7 +222,7 @@ bool aghIterator<T>::operator!=(const aghIterator<T>& _right) const
 template <class T>
 aghIterator<T>::operator int()
 {
-	// ?!?!
+	
 }
 
 #endif
