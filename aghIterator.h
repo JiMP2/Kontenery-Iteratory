@@ -186,7 +186,7 @@ aghIterator<T> & aghIterator<T>::prev()
 template <class T>
 T& aghIterator<T>::current()
 {
-     if ( container && currentIndex >= 0 && currentIndex < container->size() )
+     if ( container && currentIndex >= 0 && currentIndex < (int)container->size() )
      	return (*container)[currentIndex];
      else
           throw aghException(0, "Index out of range", __FILE__, __LINE__);
@@ -234,7 +234,7 @@ T& aghIterator<T>::operator*()
 template <class T>
 T& aghIterator<T>::operator[](int n)
 {
-     if ( container && currentIndex + n < container->size() )
+     if ( container && currentIndex + n < (int)container->size() )
 	     return (*container)[currentIndex + n];
 	else
 	     throw aghException(0, "Index out of range", __FILE__, __LINE__);
@@ -323,8 +323,9 @@ aghIterator<T>::operator int()
 {  
 	if ( container )
 	     if ( container->size() )
-	          if ( currentIndex >=0 && currentIndex < container->size() )
+	          if ( currentIndex >=0 && currentIndex < (int)container->size() )
 	               return current();
+     //TODO: Zwracanie wartości w sytuacji nie spełniania warunku
 }
 
 #endif

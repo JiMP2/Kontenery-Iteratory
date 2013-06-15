@@ -7,7 +7,21 @@ void showTestResult(int, bool);
 int main(void)
 {
     cout << "main by kk. Last updated 15.04.2013\n";
-	
+    /*
+    aghVector<int> a;
+    a.append(1);
+    a.append(2);
+    a.append(3);
+    a.append(4);
+    a.append(5);
+
+    aghIterator<int> iterator(&a);
+    cout << a << endl;
+    *iterator = 14;
+    cout << a << endl;
+    
+    
+    */
     aghVector<int> a, b;
     aghContainer<int>* cptr = &a;
     aghIterator<int> iter1(&a), iter2(&b), iter3(cptr);
@@ -78,7 +92,6 @@ int main(void)
     t10 = t10 && (iter3[-1] == a.at(1));
     showTestResult(10, t10);
 	
-	/*
     // 11th test - operator int
     iter3.atFirst();
     iter3.prev();
@@ -88,7 +101,7 @@ int main(void)
     iter3.atLast();
     iter3.next();
     t11 = t11 && ((int)iter3 == NULL);
-    */
+    showTestResult(11, t11);
 	
     // 12th - test operator*
     iter1.atFirst();
@@ -100,6 +113,7 @@ int main(void)
     iter1.current() = 2;
     t12 = t12 && (*iter1 == 2);
     showTestResult(12, t12);
+	
 	
     // 13th test - operator+
     iter2.atFirst();
@@ -117,7 +131,7 @@ int main(void)
         t13 = t13 && false;
     }
     showTestResult(13, t13);
-	
+
     // 14th test - operator-
     iter2.atLast();
     bool t14 = (*(iter2-3) == b.at(1));
