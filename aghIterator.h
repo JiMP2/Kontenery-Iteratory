@@ -11,9 +11,9 @@
 
 template <class T>
 class aghIterator {
-private:
+public:
 	aghContainer<T> * container;
-	unsigned int currentIndex;
+	int currentIndex;
 
 public:
 
@@ -36,11 +36,15 @@ public:
      //\return iterator pointing to the last element of the container
 	aghIterator<T> last();
      
-     //\brief Method to move iterator to next element of the container	
-	void next();
+     //\brief Method to move iterator to next element of the container
+     //
+     //\return reference to this iterator
+	aghIterator<T> & next();
 	
 	//\brief Method to move iterator to next element of the container
-	void prev();
+     //
+     //\return reference to this iterator
+     aghIterator<T> & prev();
 	
 	//\brief Method to return current pointed element
 	//\return current pointed element of the container
@@ -51,10 +55,14 @@ public:
 	void current(T const& _value);
 	
 	//\brief Method to set iterator to point to the first element of the container
-	void atFirst();
+     //
+     //\return reference to this iterator	
+	aghIterator<T> & atFirst();
 
 	//\brief Method to set iterator to point to the last element of the container
-	void atLast();
+	//
+     //\return reference to this iterator
+	aghIterator<T> & atLast();
 	
 	//\brief Method to return ammount of elements after current pointed (including current)
 	//\return number of elements
@@ -76,8 +84,6 @@ public:
 	//\param _right - container
 	//\return reference to this iterator
 	aghIterator<T> & operator=(aghContainer<T> * _right);
-	
-	//aghIterator<T> operator=(aghIterator<T> const & _right);
 	
 	//\brief Overload of + operator
 	//
@@ -107,6 +113,7 @@ public:
 	//
      //\return iterator pointing to the current element
 	aghIterator<T> operator++(int);
+	
 	//\brief Overload of preincrement operator. Moves iterator to next element
 	//
      //\return iterator pointing to the next element
@@ -141,8 +148,6 @@ public:
 template <class T>
 aghIterator<T>::aghIterator(aghContainer<T> * _container, unsigned int _currentIndex):container(_container), currentIndex(_currentIndex)
 {
-     if( _currentIndex >= _container->size() )
-          currentIndex = 0;
 }
 
 template <class T>
@@ -165,25 +170,26 @@ aghIterator<T> aghIterator<T>::last()
 }
 
 template <class T>
-void aghIterator<T>::next()
+aghIterator<T> & aghIterator<T>::next()
 {
-	if ( container && currentIndex < container->size()-1 )
-	     currentIndex++;
+	currentIndex++;
+	return *this;
 }
 
 template <class T>
-void aghIterator<T>::prev()
+aghIterator<T> & aghIterator<T>::prev()
 {
-	if ( container && currentIndex > 0 )
-	     currentIndex--;
+	currentIndex--;
+	return *this;	     
 }
 
 template <class T>
 T& aghIterator<T>::current()
 {
-     if ( container )
+     if ( container && currentIndex >= 0 && currentIndex < container->size() )
      	return (*container)[currentIndex];
-     //TODO: co ma zwrócić
+     else
+          throw aghException(0, "Index out of range", __FILE__, __LINE__);
 }
 
 template <class T>
@@ -194,18 +200,17 @@ void aghIterator<T>::current(T const& _value)
 }
 
 template <class T>
-void aghIterator<T>::atFirst()
+aghIterator<T> & aghIterator<T>::atFirst()
 {
 	currentIndex = 0;
+	return *this;
 }
 
 template <class T>
-void aghIterator<T>::atLast()
+aghIterator<T> & aghIterator<T>::atLast()
 {
-	if ( container )
-	     currentIndex = container->size() - 1;
-	else
-	     currentIndex = 0;
+	currentIndex = container->size() - 1;
+	return *this;
 }
 
 template <class T>
@@ -220,14 +225,13 @@ unsigned int aghIterator<T>::size()
 template <class T>
 T& aghIterator<T>::operator*()
 {
-	//return (*container)[currentIndex];
 	return this->current();
 }
 
 template <class T>
 T& aghIterator<T>::operator[](int n)
 {
-     if ( currentIndex + n < container->size() )
+     if ( container && currentIndex + n < container->size() )
 	     return (*container)[currentIndex + n];
 	else
 	     throw aghException(0, "Index out of range", __FILE__, __LINE__);
@@ -236,93 +240,70 @@ T& aghIterator<T>::operator[](int n)
 template <class T>
 aghIterator<T> & aghIterator<T>::operator=(aghContainer<T> * _right)
 {
-     
 	container = _right;
 	currentIndex = 0;
 	
 	return *this;
 }
-/*
-template <class T>
-aghIterator<T> aghIterator<T>::operator=(aghIterator<T> const& _right)
-{
-	container = ;
-	currentIndex = ;
-	
-	return *this;
-}*/
 
 template <class T>
 aghIterator<T> aghIterator<T>::operator+(int n)
 {
-     //TODO: currentIndex+n >= container->size() ---> n >= size()  // sprawdzić działanie
-	if ( currentIndex+n >= container->size()  )
-          throw aghException(0, "Index out of range", __FILE__, __LINE__);
-     else
-     	return aghIterator(container, currentIndex - n);
+     return aghIterator(container, currentIndex + n);
 }
 
 template <class T>
 aghIterator<T> & aghIterator<T>::operator+=(int n)
 {
-	//currentIndex += n;
-	for ( int i=0; i<n; i++ ) next();
+	currentIndex += n;
 	return *this;
 }
 
 template <class T>
 aghIterator<T> aghIterator<T>::operator-(int n)
 {
-     if ( currentIndex-n < 0 )
-          throw aghException(0, "Index out of range", __FILE__, __LINE__);
-     else
-     	return aghIterator(container, currentIndex - n);
+     return aghIterator(container, currentIndex - n);
 }
 
 template <class T>
 aghIterator<T> & aghIterator<T>::operator-=(int n)
 {
-	//currentIndex -= n;
-	for ( int i=0; i<n; i++ ) prev();
+	currentIndex -= n;
 	return *this;
 }
 
 template <class T>
 aghIterator<T> aghIterator<T>::operator++(int)
 {
-	aghIterator<T> temp = *this;
-	next();
-	return temp;
+	currentIndex++;
+     return aghIterator(container, currentIndex - 1);
 }
 
 template <class T>
 aghIterator<T> & aghIterator<T>::operator++()
 {
-	next();
-	aghIterator<T> temp = *this;
-	return temp;
+	currentIndex++;
+     return *this;
 }
 
 template <class T>
 aghIterator<T> aghIterator<T>::operator--(int)
 {
-	aghIterator<T> temp = *this;
-	prev();
-	return temp;
+	currentIndex--;
+     return aghIterator(container, currentIndex + 1);
 }
 
 template <class T>
 aghIterator<T> & aghIterator<T>::operator--()
 {
-	prev();
-	aghIterator<T> temp = *this;
-	return temp;
+	currentIndex--;
+     return *this;
 }
 
 template <class T>
 bool aghIterator<T>::operator==(const aghIterator<T>& _right) const
 {
-	if (container == _right.container && currentIndex == _right.currentIndex)
+	if ( container == _right.container && currentIndex == _right.currentIndex )
 		return true;
 	else
 		return false;
@@ -331,13 +312,16 @@ bool aghIterator<T>::operator==(const aghIterator<T>& _right) const
 template <class T>
 bool aghIterator<T>::operator!=(const aghIterator<T>& _right) const
 {
-	return !(this->operator==(_right));
+	return !( this->operator==(_right) );
 }
 
 template <class T>
 aghIterator<T>::operator int()
-{
-	
+{  
+	if ( container )
+	     if ( container->size() )
+	          if ( currentIndex >=0 && currentIndex < container->size() )
+	               return current();
 }
 
 #endif
