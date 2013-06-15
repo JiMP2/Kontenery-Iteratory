@@ -217,7 +217,10 @@ template <class T>
 unsigned int aghIterator<T>::size()
 {
      if ( container )
-	     return container->size() - currentIndex;
+          if ( currentIndex >= 0 )
+	          return container->size() - currentIndex;
+	     if ( currentIndex < 0 )
+	          return container->size();
 	else
 	     return 0;
 }
