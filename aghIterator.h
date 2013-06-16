@@ -324,8 +324,8 @@ aghIterator<T>::operator int()
 	if ( container )
 	     if ( container->size() )
 	          if ( currentIndex >=0 && currentIndex < (int)container->size() )
-	               return current();
-     //TODO: Zwracanie wartości w sytuacji nie spełniania warunku
+	               return 1;
+	return 0;
 }
 
 #endif
