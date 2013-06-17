@@ -11,7 +11,7 @@
 
 template <class T>
 class aghIterator {
-public:
+private:
 	aghContainer<T> * container;
 	int currentIndex;
 
@@ -141,7 +141,9 @@ public:
 	//\return TRUE if comparison is negative
 	bool operator!=(const aghIterator<T>& _right) const;
 	
-	
+	//\brief Overload of cast to int operator. Checks if iterator points to correct element in any container.
+	//
+	//\return 1 if true, 0 otherwise
 	operator int();
 };
 
@@ -186,17 +188,41 @@ aghIterator<T> & aghIterator<T>::prev()
 template <class T>
 T& aghIterator<T>::current()
 {
-     if ( container && currentIndex >= 0 && currentIndex < (int)container->size() )
-     	return (*container)[currentIndex];
-     else
-          throw aghException(0, "Index out of range", __FILE__, __LINE__);
+     if ( container )
+     {
+          if (currentIndex >= 0 && currentIndex < container->size() )
+          {
+	          return (*container)[currentIndex];
+	     }
+	     else
+	     {
+	          throw aghException(0, "Index out of range", __FILE__, __LINE__);
+	     }
+	}
+	else
+	{
+	     throw aghException(1, "Iterator doesn't point to any container.", __FILE__, __LINE__);
+	}
 }
 
 template <class T>
 void aghIterator<T>::current(T const& _value)
 {
      if ( container )
-	     container->replace(currentIndex, _value);
+     {
+          if (currentIndex >= 0 && currentIndex < container->size() )
+          {
+	          container->replace(currentIndex, _value);
+	     }
+	     else
+	     {
+	          throw aghException(0, "Index out of range", __FILE__, __LINE__);
+	     }
+	}
+	else
+	{
+	     throw aghException(1, "Iterator doesn't point to any container.", __FILE__, __LINE__);
+	}
 }
 
 template <class T>
@@ -217,12 +243,16 @@ template <class T>
 unsigned int aghIterator<T>::size()
 {
      if ( container )
+     {
           if ( currentIndex >= 0 )
 	          return container->size() - currentIndex;
 	     if ( currentIndex < 0 )
 	          return container->size();
+	}
 	else
-	     return 0;
+	{
+	     throw aghException(1, "Iterator doesn't point to any container.", __FILE__, __LINE__);
+	}
 }
 
 template <class T>
@@ -234,10 +264,11 @@ T& aghIterator<T>::operator*()
 template <class T>
 T& aghIterator<T>::operator[](int n)
 {
-     if ( container && currentIndex + n < (int)container->size() )
+     return aghIterator(container, currentIndex+n).current();
+     /*if ( container && currentIndex + n < (int)container->size() )
 	     return (*container)[currentIndex + n];
 	else
-	     throw aghException(0, "Index out of range", __FILE__, __LINE__);
+	     throw aghException(0, "Index out of range", __FILE__, __LINE__);*/
 }
 
 template <class T>
@@ -322,9 +353,13 @@ template <class T>
 aghIterator<T>::operator int()
 {  
 	if ( container )
+	{
 	     if ( container->size() )
+	     {
 	          if ( currentIndex >=0 && currentIndex < (int)container->size() )
 	               return 1;
+	     }
+	}
 	return 0;
 }
 
