@@ -190,7 +190,7 @@ T& aghIterator<T>::current()
 {
      if ( container )
      {
-          if (currentIndex >= 0 && currentIndex < container->size() )
+          if (currentIndex >= 0 && currentIndex < (int)container->size() )
           {
 	          return (*container)[currentIndex];
 	     }
@@ -210,7 +210,7 @@ void aghIterator<T>::current(T const& _value)
 {
      if ( container )
      {
-          if (currentIndex >= 0 && currentIndex < container->size() )
+          if (currentIndex >= 0 && currentIndex < (int)container->size() )
           {
 	          container->replace(currentIndex, _value);
 	     }
@@ -244,7 +244,7 @@ unsigned int aghIterator<T>::size()
 {
      if ( container )
      {
-          if ( currentIndex >= 0 )
+          if ( currentIndex >= 0 && currentIndex < (int)container->size() )
 	          return container->size() - currentIndex;
 	     if ( currentIndex < 0 )
 	          return container->size();
@@ -253,6 +253,7 @@ unsigned int aghIterator<T>::size()
 	{
 	     throw aghException(1, "Iterator doesn't point to any container.", __FILE__, __LINE__);
 	}
+	return 0;
 }
 
 template <class T>
@@ -265,10 +266,6 @@ template <class T>
 T& aghIterator<T>::operator[](int n)
 {
      return aghIterator(container, currentIndex+n).current();
-     /*if ( container && currentIndex + n < (int)container->size() )
-	     return (*container)[currentIndex + n];
-	else
-	     throw aghException(0, "Index out of range", __FILE__, __LINE__);*/
 }
 
 template <class T>
